@@ -46,13 +46,15 @@ class TooManyRequestsError extends HttpError {
   }
 }
 
-function handleErrors(err: Error, req: Request, res: Response, next: NextFunction) {
-  console.error(err.stack);
+function handleErrors(logger = console) {
+  return function(err: Error, req: Request, res: Response, next: NextFunction) {
+    logger.error(err.stack);
 
-  if (err instanceof HttpError) {
-    res.status(err.statusCode).send(err.message);
-  } else {
-    res.status(500).send('Something broke!');
+    if (err instanceof HttpError) {
+      res.status(err.statusCode).send(err.message);
+    } else {
+      res.status(500).send('Oops! Something broke!');
+    }
   }
 }
 
