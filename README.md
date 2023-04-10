@@ -5,7 +5,8 @@ This package provides an error handling middleware for Express applications.
 To install this package, use npm:
 
 ``npm install oops-error-handler``
-Usage
+
+## Usage
 The error handling middleware is used to handle errors that occur during request processing in your Express application. To use the middleware, import it into your application:
 
 
@@ -25,7 +26,7 @@ The error handling middleware can be customized by passing options to the errorH
 - `reporter`: A function that reports errors to an external service.
 - `formaters`: An object that maps error formats to formatting functions.
 
-``
+```
 const errorHandler = require('oops-error-handler');
 
 app.use(errorHandler({
@@ -57,13 +58,13 @@ app.use(errorHandler({
     }
   }
 }));
-``
+```
 
 ## Writing custom error handlers
 
 You can write custom error handlers by adding them to the handlers object. Error handlers are functions that take three arguments: the error object, the response object, and the options object.
 
-``
+```
 const errorHandler = require('express-error-handler-middleware');
 const MyCustomError = require('./my-custom-error');
 
@@ -79,14 +80,14 @@ app.get('/', (req, res, next) => {
   const error = new MyCustomError('Something went wrong');
   next(error);
 });
-``
+```
 
 In this example, a custom error handler is added for a MyCustomError error. When this error is thrown in a request handler, the error handler will be invoked with the error object and the response object. The error handler can then use the response object to send an appropriate response to the client.
 
 ## Writing custom error formats
 You can write custom error formats by adding them to the formaters object. Error formats are functions that take the error object as an argument and return a formatted error response.
 
-``
+```
 const errorHandler = require('express-error-handler-middleware');
 
 app.use(errorHandler({
@@ -96,6 +97,6 @@ app.use(errorHandler({
     }
   }
 }));
-``
+```
 
 In this example, a custom error format is added for an xml format. When an error is thrown and the client has requested an xml response format, the error formatter will be invoked with the error object and
