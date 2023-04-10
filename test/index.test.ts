@@ -1,6 +1,6 @@
 import express from 'express';
 const errorHandler = require('../index').errorHandler;
-import * as errors from '../models/errors';
+import * as errors from '../lib/models/errors';
 
 describe('ErrorHandler', () => {
     let jsonStub: jest.Mock;
