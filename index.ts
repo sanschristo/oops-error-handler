@@ -1,71 +1,58 @@
 import { Request, Response, NextFunction } from 'express';
+import * as Errors from './models/errors';
+import { ErrorHandlerOptions, ErrorHandlerMiddleware } from './models/options';
 
-class HttpError extends Error {
-  statusCode: number;
-  name: string;
-  constructor(name: string, message: string, statusCode: number) {
-    super(message);
-    this.statusCode = statusCode;
-    this.name = name;
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-class UnauthorizedError extends HttpError {
-  constructor(message?: string) {
-    super('UnauthorizedError', message || 'Unauthorized', 401);
-  }
-}
-
-class ForbiddenError extends HttpError {
-  constructor(message?: string) {
-    super('ForbiddenError', message || 'Forbidden', 403);
-  }
-}
-
-class NotFoundError extends HttpError {
-  constructor(message?: string) {
-    super('NotFoundError', message || 'Not Found', 404);
-  }
-}
-
-class StateConflict extends HttpError {
-  constructor(message?: string) {
-    super('StateConflict', message || 'State Conflict', 409);
-  }
-}
-
-class UnprocessableEntityError extends HttpError {
-  constructor(message?: string) {
-    super('UnprocessableEntityError', message || 'Unprocessable Entity', 422);
-  }
-}
-
-class TooManyRequestsError extends HttpError {
-  constructor(message?: string) {
-    super('TooManyRequestsError', message || 'Too Many Requests', 429);
-  }
-}
-
-function handleErrors(logger = console) {
-  return function(err: Error, req: Request, res: Response, next: NextFunction) {
-    logger.error(err.stack);
-
-    if (err instanceof HttpError) {
-      res.status(err.statusCode).send(err.message);
-    } else {
-      res.status(500).send('Something broke!');
+export function errorHandler(options: ErrorHandlerOptions = {}): ErrorHandlerMiddleware {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      next();
+    } catch (error) {
+      const errorHandler = 
+        (options.handlers && options.handlers[(error as Errors.HttpError).name])
+          ? options.handlers[(error as Errors.HttpError).name]
+          : defaultErrorHandler;
+      errorHandler(error, res, options);
     }
+  };
+
+  function defaultErrorHandler(
+    error: any,
+    res: Response,
+    options: ErrorHandlerOptions
+  ): void {
+    const { logger, reporter, formaters, handlers } = options;
+    const statusCode = (error as any).statusCode || Errors.InternalServerError.statusCode;
+  
+    let format: string | undefined;
+    if (formaters) {
+      format = error.format;
+    }
+  
+    let errorResponse: any;
+    if (format && formaters && formaters[format]) {
+      errorResponse = formaters[format](error);
+    } else {
+      errorResponse = {
+        error: {
+          message: error.message || 'Something went wrong!',
+          code: statusCode,
+        }
+      };
+    }
+
+    if (statusCode >= 500) {
+      if (logger) {
+        logger('error', error.message, { stack: error.stack });
+      }
+      if (reporter) {
+        reporter(error);
+      }
+    } else if (statusCode >= 400) {
+      if (logger) {
+        logger('warn', error.message, { stack: error.stack });
+      }
+    }
+  
+    res.status(statusCode).json(errorResponse);
   }
 }
-
-export {
-  HttpError,
-  UnauthorizedError,
-  ForbiddenError,
-  NotFoundError,
-  StateConflict,
-  UnprocessableEntityError,
-  TooManyRequestsError,
-  handleErrors,
-};
