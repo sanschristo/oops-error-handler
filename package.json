@@ -1,6 +1,6 @@
 {
   "name": "oops-error-handler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Error handler middleware for Express",
   "main": "index.js",
   "scripts": {
