@@ -1,5 +1,5 @@
 import express from 'express';
-const errorHandler = require('../index').errorHandler;
+import { errorHandler } from '../lib/index'
 import * as errors from '../lib/models/errors';
 
 describe('ErrorHandler', () => {
@@ -24,14 +24,14 @@ describe('ErrorHandler', () => {
     });
 
     it('Does not invoke error handling if no error is thrown', () => {
-        errorHandler()(undefined, res, () => {});
+        errorHandler()(undefined as any, res as any, () => {});
 
         expect(statusStub).not.toBeCalled();
         expect(jsonStub).not.toBeCalled();
     });
 
     it('Handles unknown errors as 500', () => {
-        errorHandler()(undefined, res, () => {throw new Error()});
+        errorHandler()(undefined as any, res as any, () => {throw new Error()});
 
         expect(statusStub).toHaveBeenCalledWith(500);
         expect(jsonStub).toHaveBeenCalledWith({error: {message: 'Something went wrong!', code: 500}});
@@ -50,7 +50,7 @@ describe('ErrorHandler', () => {
         ];
 
         knownErrors.forEach((error) => {
-            errorHandler()(undefined, res, () => {throw error});
+            errorHandler()(undefined as any, res as any, () => {throw error});
     
             expect(statusStub).toHaveBeenCalledWith(error.statusCode);
             expect(jsonStub).toHaveBeenCalledWith({error: {message: error.message, code: error.statusCode}});
@@ -61,7 +61,7 @@ describe('ErrorHandler', () => {
         const error = new errors.BadRequestError();
         const options = { handlers: { BadRequestError: jest.fn() } };
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.handlers.BadRequestError).toBeCalledWith(error, res, options);
     });
@@ -70,7 +70,7 @@ describe('ErrorHandler', () => {
         const error = new errors.InternalServerError();
         const options = { handlers: { BadRequestError: jest.fn() } };
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.handlers.BadRequestError).not.toBeCalled();
         expect(statusStub).toHaveBeenCalledWith(500);
@@ -82,7 +82,7 @@ describe('ErrorHandler', () => {
         const options = { formaters: { BadRequestError: jest.fn() } };
         error.setFormat();
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.formaters.BadRequestError).toBeCalledWith(error);
     });
@@ -92,7 +92,7 @@ describe('ErrorHandler', () => {
         const options = { formaters: { foo: jest.fn() } };
         error.setFormat('foo');
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.formaters.foo).toBeCalledWith(error);
     });
@@ -102,7 +102,7 @@ describe('ErrorHandler', () => {
         const options = { formaters: { BadRequestError: jest.fn() } };
         error.setFormat();
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.formaters.BadRequestError).not.toBeCalledWith(error);
     });
@@ -111,7 +111,7 @@ describe('ErrorHandler', () => {
         const error = new errors.InternalServerError();
         const options = { logger: jest.fn() };
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.logger).toBeCalledWith('error', error.message, { stack: error.stack });
     });
@@ -120,7 +120,7 @@ describe('ErrorHandler', () => {
         const error = new errors.UnprocessableEntityError();
         const options = { logger: jest.fn() };
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.logger).toBeCalledWith('warn', error.message, { stack: error.stack });
     });
@@ -129,7 +129,7 @@ describe('ErrorHandler', () => {
         const error = new errors.InternalServerError();
         const options = { reporter: jest.fn() };
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.reporter).toBeCalledWith(error);
     });
@@ -138,7 +138,7 @@ describe('ErrorHandler', () => {
         const error = new errors.UnprocessableEntityError();
         const options = { reporter: jest.fn() };
 
-        errorHandler(options)(undefined, res, () => {throw error});
+        errorHandler(options)(undefined as any, res as any, () => {throw error});
 
         expect(options.reporter).not.toBeCalled();
     });

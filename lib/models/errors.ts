@@ -67,7 +67,7 @@ export class TooManyRequestsError extends HttpError {
 }
 
 export class InternalServerError extends HttpError {
-    static statusCode: number = 500;
+    static statusCode = 500;
     constructor(message?: string, errors?: Error[], format?: string) {
         super('InternalServerError', message || 'Internal Server Error', 500, errors, format);
     }

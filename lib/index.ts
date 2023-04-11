@@ -20,7 +20,7 @@ export function errorHandler(options: ErrorHandlerOptions = {}): ErrorHandlerMid
     res: Response,
     options: ErrorHandlerOptions
   ): void {
-    const { logger, reporter, formaters, handlers } = options;
+    const { logger, reporter, formaters } = options;
     const statusCode = (error as any).statusCode || Errors.InternalServerError.statusCode;
   
     let format: string | undefined;
