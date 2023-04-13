@@ -13,7 +13,7 @@ export interface ErrorResponseFormaters {
 type SyncLogger = (level: 'error' | 'warn' | 'info', message: string, metadata?: any) => void;
 type AsyncLogger = (level: 'error' | 'warn' | 'info', message: string, metadata?: any) => Promise<void>;
 export type Logger = SyncLogger | AsyncLogger;
-export type ErrorHandlerMiddleware = (req: Request, res: Response, next: NextFunction) => void;
+export type ErrorHandlerMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => void;
 export type ErrorHandler = (error: any, res: Response, options: ErrorHandlerOptions) => void;
 export interface ErrorHandlerOptions {
     handlers?: Record<string, ErrorHandler>;

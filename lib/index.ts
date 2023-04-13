@@ -3,16 +3,13 @@ import * as Errors from './models/errors';
 import { ErrorHandlerOptions, ErrorHandlerMiddleware } from './models/options';
 
 export function errorHandler(options: ErrorHandlerOptions = {}): ErrorHandlerMiddleware {
-  return (req: Request, res: Response, next: NextFunction) => {
-    try {
-      next();
-    } catch (error) {
-      const errorHandler = 
-        (options.handlers && options.handlers[(error as Errors.HttpError).name])
-          ? options.handlers[(error as Errors.HttpError).name]
-          : defaultErrorHandler;
-      errorHandler(error, res, options);
-    }
+  return (err: Error, req: Request, res: Response, next: NextFunction) => {
+    const errorHandler = 
+      (options.handlers && options.handlers[(err as Errors.HttpError).name])
+        ? options.handlers[(err as Errors.HttpError).name]
+        : defaultErrorHandler;
+    errorHandler(err, res, options);
+    next(err);
   };
 
   function defaultErrorHandler(
@@ -53,6 +50,6 @@ export function errorHandler(options: ErrorHandlerOptions = {}): ErrorHandlerMid
       }
     }
   
-    res.status(statusCode).json(errorResponse);
+    res.status(statusCode).json(errorResponse).send();
   }
 }

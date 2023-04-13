@@ -19,6 +19,7 @@ type AsyncLogger = (level: 'error' | 'warn' | 'info', message: string, metadata?
 export type Logger = SyncLogger | AsyncLogger;
 
 export type ErrorHandlerMiddleware = (
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
