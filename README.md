@@ -99,4 +99,10 @@ app.use(errorHandler({
 }));
 ```
 
-In this example, a custom error format is added for an xml format. When an error is thrown and the client has requested an xml response format, the error formatter will be invoked with the error object and
+In this example, a custom error format is added for an xml format. When an error is thrown and the client has requested an xml response format, the error formatter will be invoked with the error object and the formatted error response will be returned to the client.
+
+Default error handling behavior
+If no custom error handlers or formatters are specified, the error handling middleware will use the default error handling behavior. The default error handling behavior logs errors with a severity level of 'warn' for client errors (status codes 400-499) and 'error' for server errors (status codes 500 and above). It also returns a JSON response with the error message and status code.
+
+License
+This package is licensed under the GPL-3 license. 
