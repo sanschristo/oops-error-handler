@@ -16,7 +16,9 @@ Then, add it as middleware to your Express application:
 
 ``app.use(errorHandler());``
 
-This will add the error handling middleware to your application's middleware stack. When an error occurs during request processing, the middleware will catch it and handle it appropriately.
+This will add the error handling middleware to your application's middleware stack. When an error occurs during request processing, the middleware will catch it and handle it appropriately. 
+
+Note that this middleware must be placed at the end of the middleware function stack, after all other middleware and route handlers. 
 
 ## Customization
 The error handling middleware can be customized by passing options to the errorHandler function. The available options are:

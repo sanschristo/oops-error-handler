@@ -9,7 +9,6 @@ export function errorHandler(options: ErrorHandlerOptions = {}): ErrorHandlerMid
         ? options.handlers[(err as Errors.HttpError).name]
         : defaultErrorHandler;
     errorHandler(err, res, options);
-    next(err);
   };
 
   function defaultErrorHandler(
